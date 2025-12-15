@@ -105,14 +105,27 @@ export const removeCar = async (req, res) => {
 	}
 };
 
-export const getLasCars = async (req, res) => {
+export const getStatistics = async (req, res) => {
 	try {
-		const { cars } = req.query;
-		const lastCars = await carService.getLastCars(cars);
+		const { carNumber, topSpeed } = req.query;
+		const filterBy = {
+			carNumber: carNumber ? +carNumber : 10,
+			topSpeed: topSpeed ? +topSpeed : 170,
+		};
 
-		return res.send(lastCars);
+		const statistics = await carService.getStatistics(filterBy);
+		return res.send(statistics);
 	} catch (err) {
-		logger.error('Failed to get recent events', err);
-		return res.status(500).send({ err: 'Failed to get recent events' });
+		logger.error('Failed to get car statistics', err);
+		return res.status(500).send({ err: 'Failed to get car statistics' });
 	}
+};
+
+export const carController = {
+	getCars,
+	getCarById,
+	addCar,
+	updateCar,
+	removeCar,
+	getStatistics,
 };
