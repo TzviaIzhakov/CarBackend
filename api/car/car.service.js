@@ -100,10 +100,27 @@ async function update(car) {
 	}
 }
 
+async function getStatistics(filterBy) {
+	try {
+		const collection = await dbService.getCollection('car');
+		const statistics = await collection
+			.find({ efficiency: { $gt: filterBy.topSpeed } })
+			.sort({ topSpeed: -1 })
+			.limit(filterBy.carNumber)
+			.toArray();
+
+		return statistics || [];
+	} catch (err) {
+		logger.error('cannot get car statistics', err);
+		throw err;
+	}
+}
+
 export const carService = {
 	remove,
 	query,
 	getById,
 	add,
 	update,
+	getStatistics,
 };
